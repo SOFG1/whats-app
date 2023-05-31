@@ -2,6 +2,9 @@ import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Button, TextInput } from "../../UI";
 import { phoneNumberValidator } from "../../utils/phoneNumberValidator";
+import { useSelector } from "react-redux";
+import { UserCredentials, userCredentialsSelector } from "../../store/user";
+import { useGetChatMessagesMutation } from "../../api/chat";
 
 const StyledBox = styled.div`
   display: flex;
@@ -19,6 +22,10 @@ const StyledButton = styled(Button)`
 `;
 
 const CreateChatComponent = React.memo(() => {
+  const [getMessages, { isLoading }] = useGetChatMessagesMutation();
+  const { instanceId, instanceToken } = useSelector(
+    userCredentialsSelector
+  ) as UserCredentials;
   const [phoneNumber, setPhoneNumber] = useState<string>("");
 
   const handleChangeNumber = useCallback((phone: string) => {
@@ -27,6 +34,17 @@ const CreateChatComponent = React.memo(() => {
     }
     setPhoneNumber(phone);
   }, []);
+
+  const handleCreateChat = useCallback(() => {
+    getMessages({ chatId: phoneNumber, instanceId, instanceToken })
+      .unwrap()
+      .catch((e) => {
+        alert(e);
+      })
+      .finally(() => {
+        setPhoneNumber('')
+      })
+  }, [instanceId, instanceToken, phoneNumber]);
 
   return (
     <StyledBox>
@@ -37,7 +55,12 @@ const CreateChatComponent = React.memo(() => {
         value={phoneNumber}
         onChange={handleChangeNumber}
       />
-      <StyledButton disabled={phoneNumber.length !== 12}>Add chat</StyledButton>
+      <StyledButton
+        onClick={handleCreateChat}
+        disabled={phoneNumber.length !== 12 || isLoading}
+      >
+        Add chat
+      </StyledButton>
     </StyledBox>
   );
 });

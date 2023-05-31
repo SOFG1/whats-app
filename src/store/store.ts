@@ -3,6 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { persistStore } from "redux-persist";
 import { emptyApi } from "../api";
 import { userReducer } from "./user";
+import { chatReducer } from "./chat";
 
 
 
@@ -10,6 +11,8 @@ import { userReducer } from "./user";
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    chat: chatReducer,
+
     [emptyApi.reducerPath]: emptyApi.reducer,
   },
   middleware: (getDefaultMiddleware) => {

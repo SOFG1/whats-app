@@ -1,9 +1,9 @@
 import { emptyApi } from ".";
 
-type UserLoginPayload = {
+export interface IUserLoginPayload {
   instanceId: string;
   instanceToken: string;
-};
+}
 
 type UserLoginRes = {
   stateInstance: string;
@@ -13,7 +13,7 @@ export const userApi = emptyApi.injectEndpoints({
   overrideExisting: false,
   endpoints: (builder) => {
     return {
-      getInstanceState: builder.query<any, UserLoginPayload>({
+      getInstanceState: builder.query<any, IUserLoginPayload>({
         query: ({ instanceId, instanceToken }) => {
           return {
             url: `waInstance${instanceId}/getStateInstance/${instanceToken}/`,
