@@ -29,9 +29,9 @@ const StyledButton = styled(Button)`
 `;
 
 const SignInView = React.memo(() => {
-  const [authorize, {}] = useLazyGetInstanceStateQuery();
-  const [instanceId, setInstanceId] = useState<string>("1101826007");
-  const [instanceToken, setInstanceToken] = useState<string>("2b5f28fbf4f54ca8bb6bdf0bd2c96f107b2e40fa392f421681");
+  const [authorize, {isLoading}] = useLazyGetInstanceStateQuery();
+  const [instanceId, setInstanceId] = useState<string>("");
+  const [instanceToken, setInstanceToken] = useState<string>("");
 
   const handleLogin = useCallback(
     (e: React.FormEvent) => {
@@ -63,7 +63,7 @@ const SignInView = React.memo(() => {
         onChange={setInstanceToken}
         placeholder="API Token"
       />
-      <StyledButton disabled={!instanceId || !instanceToken}>Authorize</StyledButton>
+      <StyledButton disabled={!instanceId || !instanceToken || isLoading}>Authorize</StyledButton>
     </StyledWrapper>
   );
 });

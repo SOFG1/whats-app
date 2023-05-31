@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import { IUserState } from ".";
 import { userApi } from "../../api/user";
 
@@ -23,4 +25,13 @@ export const userSlice = createSlice({
   },
 });
 
-export default userSlice.reducer;
+const persistedUserReducer = persistReducer(
+  {
+    key: "user",
+    storage,
+    whitelist: ["credentials"],
+  },
+  userSlice.reducer
+);
+
+export default persistedUserReducer;
