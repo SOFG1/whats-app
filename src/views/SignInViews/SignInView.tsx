@@ -32,18 +32,22 @@ const SignInView = React.memo(() => {
   const [password, setPassword] = useState<string>("");
 
   const handleLogin = useCallback((e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
   }, []);
 
   return (
     <StyledWrapper onSubmit={handleLogin}>
       <StyledTitle>Sign in</StyledTitle>
-      <StyledInput value={login} onChange={setLogin} placeholder="Login" />
+      <StyledInput
+        value={login}
+        onChange={setLogin}
+        placeholder="Instance ID"
+      />
       <StyledInput
         value={password}
         type="password"
         onChange={setPassword}
-        placeholder="Password"
+        placeholder="API Token"
       />
       <StyledButton>Sign in</StyledButton>
     </StyledWrapper>
