@@ -4,9 +4,14 @@ import styled from "styled-components";
 import { chatDialogsSelector, selectedDialogSelector } from "../../store/chat";
 import { IMessage, useGetChatMessagesMutation } from "../../api/chat";
 import { userCredentialsSelector } from "../../store/user";
-import { MessageComponent } from "../../components/ChatComponents";
+import {
+  MessageComponent,
+  MessageFormComponent,
+} from "../../components/ChatComponents";
 
 const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100%;
   overflow-y: auto;
   border-radius: 15px;
@@ -57,6 +62,7 @@ const ChatView = React.memo(() => {
       {data?.messages?.map((m: IMessage) => (
         <MessageComponent message={m} key={m.idMessage} />
       ))}
+      {chatId && <MessageFormComponent />}
     </StyledWrapper>
   );
 });

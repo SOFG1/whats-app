@@ -18,7 +18,7 @@ interface IProps {
   message: IMessage;
 }
 const MessageComponent = React.memo(({ message }: IProps) => {
-  console.log(message);
+  if(!message.textMessage) return null
   return <StyledMessage isOutgoing={message.type === 'outgoing'}>{message.textMessage}</StyledMessage>;
 });
 
