@@ -11,7 +11,11 @@ const initialState: IUserState = {
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.credentials = null
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(
       userApi.endpoints.getInstanceState.matchFulfilled,
@@ -24,6 +28,9 @@ export const userSlice = createSlice({
     );
   },
 });
+
+export const { logout } = userSlice.actions;
+
 
 const persistedUserReducer = persistReducer(
   {

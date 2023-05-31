@@ -21,6 +21,8 @@ const StyledTitle = styled.h1`
 `;
 
 const StyledInput = styled(TextInput)`
+  width: 400px;
+  max-width: 100%;
   margin-bottom: 15px;
 `;
 
@@ -29,7 +31,7 @@ const StyledButton = styled(Button)`
 `;
 
 const SignInView = React.memo(() => {
-  const [authorize, {isLoading}] = useLazyGetInstanceStateQuery();
+  const [authorize, { isLoading }] = useLazyGetInstanceStateQuery();
   const [instanceId, setInstanceId] = useState<string>("");
   const [instanceToken, setInstanceToken] = useState<string>("");
 
@@ -63,7 +65,9 @@ const SignInView = React.memo(() => {
         onChange={setInstanceToken}
         placeholder="API Token"
       />
-      <StyledButton disabled={!instanceId || !instanceToken || isLoading}>Authorize</StyledButton>
+      <StyledButton disabled={!instanceId || !instanceToken || isLoading}>
+        Authorize
+      </StyledButton>
     </StyledWrapper>
   );
 });

@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { DialogsView } from "../views/ChatViews";
+import { LogoutIcon } from "../UI";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/user";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -10,9 +13,24 @@ const StyledWrapper = styled.div`
   height: 100vh;
 `;
 
+const LogoutBtn = styled.button`
+  position: absolute;
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  top: 5px;
+  right: 5px;
+`;
+
 const Chat = React.memo(() => {
+  const dispatch = useDispatch();
+
   return (
     <StyledWrapper>
+      <LogoutBtn onClick={() => dispatch(logout())}>
+        <LogoutIcon />
+      </LogoutBtn>
       <DialogsView />
     </StyledWrapper>
   );
