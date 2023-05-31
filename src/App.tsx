@@ -1,10 +1,26 @@
-import { SignIn } from "./pages";
+import { Route, Routes } from "react-router-dom";
+import { Chat, SignIn, RedirectPage } from "./pages";
 
 function App() {
   return (
-    <>
-      <SignIn />
-    </>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <RedirectPage>
+            <Chat />
+          </RedirectPage>
+        }
+      />
+      <Route
+        path="/sign-in"
+        element={
+          <RedirectPage>
+            <SignIn />
+          </RedirectPage>
+        }
+      />
+    </Routes>
   );
 }
 
