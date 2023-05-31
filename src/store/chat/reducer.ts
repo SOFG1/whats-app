@@ -5,7 +5,7 @@ import { chatApi } from "../../api/chat";
 
 const initialState: IChatState = {
   dialogs: [],
-  selectedDialog: null
+  selectedDialog: null,
 };
 
 export const userSlice = createSlice({
@@ -13,24 +13,17 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setSelectedDialog: (state, action: PayloadAction<string | null>) => {
-      state.selectedDialog = action.payload
+      state.selectedDialog = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder.addMatcher(
-      chatApi.endpoints.getChatMessages.matchFulfilled,
-      (state, { payload }) => {
-        const alreadyAdded = state.dialogs.includes(payload.chatId)
-        if (!alreadyAdded) {
-          state.dialogs.push(payload.chatId);
-        }
+    addDialog: (state, action: PayloadAction<string>) => {
+      if (!state.dialogs.includes(action.payload)) {
+        state.dialogs.push(action.payload);
       }
-    );
+      state.selectedDialog = action.payload;
+    },
   },
 });
 
-
-
-export const {setSelectedDialog} = userSlice.actions;
+export const { setSelectedDialog, addDialog } = userSlice.actions;
 
 export default userSlice.reducer;

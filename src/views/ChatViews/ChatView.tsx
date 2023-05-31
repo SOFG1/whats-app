@@ -34,9 +34,7 @@ const ChatView = React.memo(() => {
   const credentials = useSelector(userCredentialsSelector);
   const chatId = useSelector(selectedDialogSelector);
   const dialogs = useSelector(chatDialogsSelector);
-  const [getMessages, { data }] = useGetChatMessagesMutation({
-    fixedCacheKey: chatId || "null",
-  });
+  const [getMessages, { data }] = useGetChatMessagesMutation();
 
   useEffect(() => {
     if (credentials && chatId) {

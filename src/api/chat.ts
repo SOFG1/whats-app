@@ -5,6 +5,10 @@ interface IChatHistoryPayload extends IUserLoginPayload {
   chatId: string;
 }
 
+interface ISendMessagePayload extends IChatHistoryPayload {
+  message: string
+}
+
 export interface IMessage {
   chatId: string
   idMessage: string
@@ -44,8 +48,27 @@ export const chatApi = emptyApi.injectEndpoints({
           return raw.data.message;
         },
       }),
+      sendMessage: builder.mutation<any, ISendMessagePayload>({
+        query: ({ instanceId, instanceToken, chatId, message }) => {
+          return {
+            url: `waInstance${instanceId}/sendMessage/${instanceToken}/`,
+            method: "POST",
+            body: {
+              chatId: `${chatId}@c.us`,
+              message,
+            },
+          };
+        },
+        transformResponse: (raw: any, req, params): ChatHistoryRes => {
+          console.log(raw)
+          return raw
+        },
+        transformErrorResponse: (raw: any) => {
+          return raw
+        },
+      }),
     };
   },
 });
 
-export const { useGetChatMessagesMutation } = chatApi;
+export const { useGetChatMessagesMutation, useSendMessageMutation } = chatApi;

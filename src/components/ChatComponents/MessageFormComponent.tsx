@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { SendIcon, TextArea } from "../../UI";
+import { useSelector } from "react-redux";
+import { userCredentialsSelector } from "../../store/user";
+import { selectedDialogSelector } from "../../store/chat";
+import { useSendMessageMutation } from "../../api/chat";
 
 const StyledForm = styled.div`
   display: flex;
@@ -25,7 +29,18 @@ const StyledBtn = styled.button`
 `;
 
 const MessageFormComponent = React.memo(() => {
+  const credentials = useSelector(userCredentialsSelector);
+  const chatId = useSelector(selectedDialogSelector);
+  const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [text, setText] = useState<string>("");
+
+  const handleSend = useCallback(() => {
+    console.log(123)
+    if (credentials && chatId) {
+      const { instanceId, instanceToken } = credentials;
+      sendMessage({ instanceId, instanceToken, chatId, message: text });
+    }
+  }, [credentials, chatId, text, sendMessage]);
 
   return (
     <StyledForm>
@@ -35,7 +50,7 @@ const MessageFormComponent = React.memo(() => {
         placeholder="Enter message"
       />
       {text && (
-        <StyledBtn>
+        <StyledBtn onClick={handleSend}>
           <SendIcon />
         </StyledBtn>
       )}

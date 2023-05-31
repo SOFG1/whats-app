@@ -5,6 +5,8 @@ import { phoneNumberValidator } from "../../utils/phoneNumberValidator";
 import { useSelector } from "react-redux";
 import { UserCredentials, userCredentialsSelector } from "../../store/user";
 import { useGetChatMessagesMutation } from "../../api/chat";
+import { useDispatch } from "react-redux";
+import { addDialog } from "../../store/chat";
 
 const StyledBox = styled.div`
   display: flex;
@@ -23,11 +25,8 @@ const StyledButton = styled(Button)`
 `;
 
 const CreateChatComponent = React.memo(() => {
-  const credentials = useSelector(userCredentialsSelector);
+  const dispatch = useDispatch();
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [getMessages, { isLoading }] = useGetChatMessagesMutation({
-    fixedCacheKey: phoneNumber,
-  });
 
   const handleChangeNumber = useCallback((phone: string) => {
     if (!phoneNumberValidator(phone) && phone !== "") {
@@ -36,17 +35,6 @@ const CreateChatComponent = React.memo(() => {
     setPhoneNumber(phone);
   }, []);
 
-  const handleCreateChat = useCallback(() => {
-    const { instanceId, instanceToken } = credentials as UserCredentials;
-    getMessages({ chatId: phoneNumber, instanceId, instanceToken })
-      .unwrap()
-      .catch((e) => {
-        alert(e);
-      })
-      .finally(() => {
-        setPhoneNumber("");
-      });
-  }, [credentials, phoneNumber]);
 
   return (
     <StyledBox>
@@ -58,8 +46,8 @@ const CreateChatComponent = React.memo(() => {
         onChange={handleChangeNumber}
       />
       <StyledButton
-        onClick={handleCreateChat}
-        disabled={phoneNumber.length !== 12 || isLoading}
+        onClick={() => dispatch(addDialog(phoneNumber))}
+        disabled={phoneNumber.length !== 12}
       >
         Add chat
       </StyledButton>
