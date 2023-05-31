@@ -15,11 +15,12 @@ interface IProps {
   children: string;
   onClick?: () => void;
   disabled?: boolean;
+  className?: string
 }
 
-const Button = React.memo(({ children, onClick, disabled }: IProps) => {
+const Button = React.memo(({ children, onClick, disabled, className }: IProps) => {
   return (
-    <StyledButton onClick={onClick} disabled={disabled}>
+    <StyledButton onClick={onClick} disabled={disabled} className={className}>
       {children}
     </StyledButton>
   );
