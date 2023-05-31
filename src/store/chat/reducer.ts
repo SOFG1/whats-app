@@ -21,9 +21,6 @@ export const userSlice = createSlice({
       chatApi.endpoints.getChatMessages.matchFulfilled,
       (state, { payload }) => {
         const alreadyAdded = state.dialogs.includes(payload.chatId)
-        if(alreadyAdded) {
-          alert("You have already added this number")
-        }
         if (!alreadyAdded) {
           state.dialogs.push(payload.chatId);
         }

@@ -26,11 +26,19 @@ const StyledText = styled.p`
 `;
 
 const ChatView = React.memo(() => {
+  const credentials = useSelector(userCredentialsSelector);
   const chatId = useSelector(selectedDialogSelector);
   const dialogs = useSelector(chatDialogsSelector);
-  const [, { data }] = useGetChatMessagesMutation({
+  const [getMessages, { data }] = useGetChatMessagesMutation({
     fixedCacheKey: chatId || "null",
   });
+
+  useEffect(() => {
+    if (credentials && chatId) {
+      const { instanceId, instanceToken } = credentials;
+      getMessages({ chatId, instanceId, instanceToken });
+    }
+  }, [credentials, chatId]);
 
   return (
     <StyledWrapper>
