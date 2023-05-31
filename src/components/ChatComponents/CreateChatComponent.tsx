@@ -9,6 +9,7 @@ import { useGetChatMessagesMutation } from "../../api/chat";
 const StyledBox = styled.div`
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
 `;
 
 const StyledInput = styled(TextInput)`

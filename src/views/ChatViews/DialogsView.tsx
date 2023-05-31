@@ -1,13 +1,21 @@
 import React from "react";
 import styled from "styled-components";
-import { CreateChatComponent } from "../../components/ChatComponents";
+import {
+  CreateChatComponent,
+  DialogComponent,
+} from "../../components/ChatComponents";
+import { useSelector } from "react-redux";
+import { chatDialogsSelector } from "../../store/chat";
 
 const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 300px;
   background-color: #fff;
   padding: 10px;
   border-radius: 10px;
+  overflow-y: auto;
 `;
 
 const StyledTitle = styled.p`
@@ -17,10 +25,14 @@ const StyledTitle = styled.p`
 `;
 
 const DialogsView = React.memo(() => {
+  const dialogs = useSelector(chatDialogsSelector);
   return (
     <StyledWrapper>
       <StyledTitle>Chats:</StyledTitle>
       <CreateChatComponent />
+      {dialogs.map((d: string) => {
+        return <DialogComponent chatId={d} key={d} />;
+      })}
     </StyledWrapper>
   );
 });

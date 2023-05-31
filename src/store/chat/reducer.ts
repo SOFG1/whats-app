@@ -3,7 +3,7 @@ import { IChatState } from ".";
 import { chatApi } from "../../api/chat";
 
 const initialState: IChatState = {
-  dialogs: [],
+  dialogs: ['995579707489', '995599628235'],
 };
 
 export const userSlice = createSlice({
