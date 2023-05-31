@@ -1,5 +1,7 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import { setSelectedDialog } from "../../store/chat";
 
 const StyledItem = styled.button`
   border: 2px solid green;
@@ -20,7 +22,13 @@ interface IProps {
 }
 
 const DialogComponent = React.memo(({ chatId }: IProps) => {
-  return <StyledItem>{chatId}</StyledItem>;
+  const dispatch = useDispatch();
+
+  return (
+    <StyledItem onClick={() => dispatch(setSelectedDialog(chatId))}>
+      {chatId}
+    </StyledItem>
+  );
 });
 
 export default DialogComponent;

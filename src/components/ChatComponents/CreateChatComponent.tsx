@@ -23,11 +23,11 @@ const StyledButton = styled(Button)`
 `;
 
 const CreateChatComponent = React.memo(() => {
-  const [getMessages, { isLoading }] = useGetChatMessagesMutation();
-  const { instanceId, instanceToken } = useSelector(
-    userCredentialsSelector
-  ) as UserCredentials;
+  const credentials = useSelector(userCredentialsSelector);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [getMessages, { isLoading }] = useGetChatMessagesMutation({
+    fixedCacheKey: phoneNumber,
+  });
 
   const handleChangeNumber = useCallback((phone: string) => {
     if (!phoneNumberValidator(phone) && phone !== "") {
@@ -37,15 +37,16 @@ const CreateChatComponent = React.memo(() => {
   }, []);
 
   const handleCreateChat = useCallback(() => {
+    const { instanceId, instanceToken } = credentials as UserCredentials;
     getMessages({ chatId: phoneNumber, instanceId, instanceToken })
       .unwrap()
       .catch((e) => {
         alert(e);
       })
       .finally(() => {
-        setPhoneNumber('')
-      })
-  }, [instanceId, instanceToken, phoneNumber]);
+        setPhoneNumber("");
+      });
+  }, [credentials, phoneNumber]);
 
   return (
     <StyledBox>

@@ -1,15 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import { IChatState } from ".";
 import { chatApi } from "../../api/chat";
 
 const initialState: IChatState = {
-  dialogs: ['995579707489', '995599628235'],
+  dialogs: [],
+  selectedDialog: null
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedDialog: (state, action: PayloadAction<string | null>) => {
+      state.selectedDialog = action.payload
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(
       chatApi.endpoints.getChatMessages.matchFulfilled,
@@ -26,6 +32,8 @@ export const userSlice = createSlice({
   },
 });
 
-export const {} = userSlice.actions;
+
+
+export const {setSelectedDialog} = userSlice.actions;
 
 export default userSlice.reducer;

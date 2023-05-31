@@ -5,9 +5,22 @@ interface IChatHistoryPayload extends IUserLoginPayload {
   chatId: string;
 }
 
-type UserLoginRes = {
-  stateInstance: string;
-};
+export interface IMessage {
+  chatId: string
+  idMessage: string
+  sendByApi: boolean;
+  statusMessage: string
+  textMessage: string
+  timestamp: number;
+  type: string;
+  typeMessage: string;
+}
+
+
+type ChatHistoryRes = {
+  chatId: string,
+  messages: IMessage[]
+}
 
 export const chatApi = emptyApi.injectEndpoints({
   overrideExisting: false,
@@ -20,11 +33,12 @@ export const chatApi = emptyApi.injectEndpoints({
             method: "POST",
             body: {
               chatId: `${chatId}@c.us`,
+              count: 150,
             },
           };
         },
-        transformResponse: (raw: UserLoginRes, req, params) => {
-          return {messages: raw, chatId: params.chatId};
+        transformResponse: (raw: IMessage[], req, params): ChatHistoryRes => {
+          return { messages: raw, chatId: params.chatId };
         },
         transformErrorResponse: (raw: any) => {
           return raw.data.message;

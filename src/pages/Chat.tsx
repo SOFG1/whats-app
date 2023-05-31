@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { DialogsView } from "../views/ChatViews";
+import { ChatView, DialogsView } from "../views/ChatViews";
 import { LogoutIcon } from "../UI";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/user";
@@ -32,6 +32,7 @@ const Chat = React.memo(() => {
         <LogoutIcon />
       </LogoutBtn>
       <DialogsView />
+      <ChatView />
     </StyledWrapper>
   );
 });
