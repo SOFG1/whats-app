@@ -35,10 +35,13 @@ const MessageFormComponent = React.memo(() => {
   const [text, setText] = useState<string>("");
 
   const handleSend = useCallback(() => {
-    console.log(123)
     if (credentials && chatId) {
       const { instanceId, instanceToken } = credentials;
-      sendMessage({ instanceId, instanceToken, chatId, message: text });
+      sendMessage({ instanceId, instanceToken, chatId, message: text })
+        .unwrap()
+        .then(() => {
+          setText("");
+        });
     }
   }, [credentials, chatId, text, sendMessage]);
 
@@ -50,7 +53,7 @@ const MessageFormComponent = React.memo(() => {
         placeholder="Enter message"
       />
       {text && (
-        <StyledBtn onClick={handleSend}>
+        <StyledBtn onClick={handleSend} disabled={isLoading}>
           <SendIcon />
         </StyledBtn>
       )}

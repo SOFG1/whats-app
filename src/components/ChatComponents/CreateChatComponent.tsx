@@ -2,9 +2,6 @@ import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Button, TextInput } from "../../UI";
 import { phoneNumberValidator } from "../../utils/phoneNumberValidator";
-import { useSelector } from "react-redux";
-import { UserCredentials, userCredentialsSelector } from "../../store/user";
-import { useGetChatMessagesMutation } from "../../api/chat";
 import { useDispatch } from "react-redux";
 import { addDialog } from "../../store/chat";
 
