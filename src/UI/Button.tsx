@@ -2,13 +2,13 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button<{ disabled?: boolean }>`
-  background-color: #00a884;
+  background-color:  ${({ disabled }) => (disabled ? "#364a46" : "#00a884")};
   color: #fff;
   border: none;
   padding: 5px 15px;
   font-size: 18px;
   border-radius: 5px;
-  cursor: ${({ disabled }) => (disabled ? "not-alowed" : "pointer")};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
 interface IProps {

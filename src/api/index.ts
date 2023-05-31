@@ -4,7 +4,7 @@ const hostUrl = "https://api.green-api.com/";
 
 //RTK query api
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${hostUrl}/`,
+  baseUrl: `${hostUrl}`,
 });
 
 export const emptyApi = createApi({

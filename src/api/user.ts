@@ -1,22 +1,34 @@
 import { emptyApi } from ".";
 
 type UserLoginPayload = {
-  email: string;
-  password: string;
+  instanceId: string;
+  instanceToken: string;
 };
 
-type UserLoginRes = any;
+type UserLoginRes = {
+  stateInstance: string;
+};
 
 export const userApi = emptyApi.injectEndpoints({
   overrideExisting: false,
   endpoints: (builder) => {
     return {
-      getInstanceState: builder.mutation<UserLoginRes, UserLoginPayload>({
-        query: (body) => {
+      getInstanceState: builder.query<any, UserLoginPayload>({
+        query: ({ instanceId, instanceToken }) => {
           return {
-            url: "user/signin/",
-            method: "POST",
-            body,
+            url: `waInstance${instanceId}/getStateInstance/${instanceToken}/`,
+            method: "GET",
+          };
+        },
+        transformResponse: (
+          raw: UserLoginRes,
+          req,
+          { instanceId, instanceToken }
+        ) => {
+          return {
+            instanceId,
+            instanceToken,
+            status: raw.stateInstance,
           };
         },
       }),
@@ -24,7 +36,4 @@ export const userApi = emptyApi.injectEndpoints({
   },
 });
 
-
-export const {
-  useGetInstanceStateMutation
-} = userApi;
+export const { useLazyGetInstanceStateQuery } = userApi;
