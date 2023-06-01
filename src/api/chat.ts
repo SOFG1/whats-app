@@ -6,25 +6,24 @@ interface IChatHistoryPayload extends IUserLoginPayload {
 }
 
 interface ISendMessagePayload extends IChatHistoryPayload {
-  message: string
+  message: string;
 }
 
 export interface IMessage {
-  chatId: string
-  idMessage: string
+  chatId: string;
+  idMessage: string;
   sendByApi: boolean;
-  statusMessage: string
-  textMessage: string
+  statusMessage: string;
+  textMessage: string;
   timestamp: number;
   type: string;
   typeMessage: string;
 }
 
-
 type ChatHistoryRes = {
-  chatId: string,
-  messages: IMessage[]
-}
+  chatId: string;
+  messages: IMessage[];
+};
 
 export const chatApi = emptyApi.injectEndpoints({
   overrideExisting: false,
@@ -59,16 +58,32 @@ export const chatApi = emptyApi.injectEndpoints({
             },
           };
         },
-        transformResponse: (raw: any, req, params): ChatHistoryRes => {
-          console.log(raw)
-          return raw
+        transformResponse: (raw: any): ChatHistoryRes => {
+          console.log(raw);
+          return raw;
         },
         transformErrorResponse: (raw: any) => {
-          return raw
+          return raw;
+        },
+      }),
+      getNotifications: builder.query<any, IUserLoginPayload>({
+        query: ({ instanceId, instanceToken }) => {
+          return {
+            url: `waInstance${instanceId}/receiveNotification/${instanceToken}/`,
+            method: "GET",
+          };
+        },
+        transformResponse: (raw: any) => {
+          console.log(raw);
+          return raw;
         },
       }),
     };
   },
 });
 
-export const { useGetChatMessagesMutation, useSendMessageMutation } = chatApi;
+export const {
+  useGetChatMessagesMutation,
+  useSendMessageMutation,
+  useGetNotificationsQuery,
+} = chatApi;

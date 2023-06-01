@@ -4,7 +4,7 @@ import { SendIcon, TextArea } from "../../UI";
 import { useSelector } from "react-redux";
 import { userCredentialsSelector } from "../../store/user";
 import { selectedDialogSelector } from "../../store/chat";
-import { useSendMessageMutation } from "../../api/chat";
+import { useGetChatMessagesMutation, useSendMessageMutation } from "../../api/chat";
 
 const StyledForm = styled.div`
   display: flex;
@@ -43,7 +43,7 @@ const MessageFormComponent = React.memo(() => {
           setText("");
         });
     }
-  }, [credentials, chatId, text, sendMessage]);
+  }, [credentials, chatId, text, sendMessage, getMessages]);
 
   return (
     <StyledForm>

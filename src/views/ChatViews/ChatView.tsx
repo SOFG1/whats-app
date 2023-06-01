@@ -1,9 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { chatDialogsSelector, selectedDialogSelector } from "../../store/chat";
-import { IMessage, useGetChatMessagesMutation } from "../../api/chat";
-import { userCredentialsSelector } from "../../store/user";
+import {
+  IMessage,
+  useGetChatMessagesMutation,
+  useGetNotificationsQuery,
+} from "../../api/chat";
+import { UserCredentials, userCredentialsSelector } from "../../store/user";
 import {
   MessageComponent,
   MessageFormComponent,
@@ -34,7 +38,21 @@ const ChatView = React.memo(() => {
   const credentials = useSelector(userCredentialsSelector);
   const chatId = useSelector(selectedDialogSelector);
   const dialogs = useSelector(chatDialogsSelector);
-  const [getMessages, { data }] = useGetChatMessagesMutation();
+  const {data: notifications} = useGetNotificationsQuery(
+    credentials as UserCredentials,
+    { skip: !credentials, pollingInterval: 3000 }
+  );
+  const [getMessages, { data, ...res }] = useGetChatMessagesMutation({
+    fixedCacheKey: chatId || "null",
+  });
+
+
+  const messages = useMemo(() => {
+    return (
+      data?.messages &&
+      [...data.messages].sort((m: IMessage, p) => m.timestamp - p.timestamp)
+    );
+  }, [data?.messages]);
 
   useEffect(() => {
     if (credentials && chatId) {
@@ -53,11 +71,11 @@ const ChatView = React.memo(() => {
         <StyledText>Add a chat to start communicate</StyledText>
       )}
 
-      {chatId && data?.messages?.length === 0 && (
+      {chatId && messages?.length === 0 && (
         <StyledText>You have no messages yet</StyledText>
       )}
 
-      {data?.messages?.map((m: IMessage) => (
+      {messages?.map((m: IMessage) => (
         <MessageComponent message={m} key={m.idMessage} />
       ))}
       {chatId && <MessageFormComponent />}

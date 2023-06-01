@@ -5,7 +5,7 @@ export interface IUserLoginPayload {
   instanceToken: string;
 }
 
-type UserLoginRes = {
+export type UserLoginRes = {
   stateInstance: string;
 };
 
