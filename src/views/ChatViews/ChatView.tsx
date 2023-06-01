@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { chatDialogsSelector, selectedDialogSelector } from "../../store/chat";
@@ -27,25 +27,25 @@ const StyledBox = styled.div`
   overflow-y: auto;
   margin-bottom: 10px;
   /* width */
-::-webkit-scrollbar {
-  width: 10px;
-}
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #fff;
-  border-radius: 5px;
-}
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #fff;
+    border-radius: 5px;
+  }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 `;
 
 const StyledText = styled.p`
@@ -61,10 +61,11 @@ const ChatView = React.memo(() => {
   const credentials = useSelector(userCredentialsSelector);
   const chatId = useSelector(selectedDialogSelector);
   const dialogs = useSelector(chatDialogsSelector);
-  const { data: notifications } = useGetNotificationQuery(
-    credentials as UserCredentials,
-    { skip: !credentials, pollingInterval: 2000 }
-  );
+  const listRef = useRef<HTMLDivElement>(null);
+  const {} = useGetNotificationQuery(credentials as UserCredentials, {
+    skip: !credentials,
+    pollingInterval: 2000,
+  });
   const { data } = useGetChatMessagesQuery(
     { ...(credentials as UserCredentials), chatId: chatId as string },
     { skip: !credentials || !chatId }
@@ -76,6 +77,12 @@ const ChatView = React.memo(() => {
       [...data.messages].sort((m: IMessage, p) => m.timestamp - p.timestamp)
     );
   }, [data?.messages]);
+
+  //Scroll box to the bottom
+  useEffect(() => {
+    const box = listRef.current;
+    box?.scrollTo({ top: box.scrollHeight, behavior: "smooth" });
+  }, [messages]);
 
   return (
     <StyledWrapper>
@@ -90,7 +97,7 @@ const ChatView = React.memo(() => {
       {chatId && messages?.length === 0 && (
         <StyledText>You have no messages yet</StyledText>
       )}
-      <StyledBox>
+      <StyledBox ref={listRef}>
         {messages?.map((m: IMessage) => (
           <MessageComponent message={m} key={m.idMessage} />
         ))}

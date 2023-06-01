@@ -65,9 +65,7 @@ export const chatApi = emptyApi.injectEndpoints({
         async onQueryStarted(payload, { dispatch, queryFulfilled }) {
           try {
             const { data } = await queryFulfilled;
-            console.log(data);
             const { instanceId, instanceToken, chatId } = payload;
-            console.log(payload);
             const newMessage = {
               type: "outgoing",
               idMessage: data.idMessage,
