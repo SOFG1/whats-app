@@ -1,7 +1,10 @@
 import { emptyApi } from ".";
 import { IUserLoginPayload } from "./user";
 
-const outgoingMessagesTypes = ['outgoingAPIMessageReceived', 'outgoingMessageReceived']
+const outgoingMessagesTypes = [
+  "outgoingAPIMessageReceived",
+  "outgoingMessageReceived",
+];
 
 interface IChatHistoryPayload extends IUserLoginPayload {
   chatId: string;
@@ -80,20 +83,48 @@ export const chatApi = emptyApi.injectEndpoints({
         },
         async onQueryStarted(payload, { dispatch, queryFulfilled }) {
           try {
-            const { data } = await queryFulfilled;            
+            const { data } = await queryFulfilled;
+            console.log(data)
             //Outgoing message handling
-            if(data?.body?.typeWebhook === 'outgoingAPIMessageReceived' || data?.body?.typeWebhook === 'outgoingMessageReceived') {
-              const chatId = data.body.senderData.chatId.slice(0, 12)
-              const outgoingMessage = data.body?.messageData?.extendedTextMessageData?.text
-              const apiMessageText = data.body?.messageData?.textMessageData?.textMessage
+            if (
+              data?.body?.typeWebhook === "outgoingAPIMessageReceived" ||
+              data?.body?.typeWebhook === "outgoingMessageReceived"
+            ) {
+              const chatId = data.body.senderData.chatId.slice(0, 12);
+              const outgoingMessage =
+                data.body?.messageData?.extendedTextMessageData?.text;
+              const apiMessageText =
+                data.body?.messageData?.textMessageData?.textMessage;
               const newMessage = {
                 type: "outgoing",
                 idMessage: data.body.idMessage,
                 typeMessage: "extendedTextMessage",
                 chatId,
-                textMessage : outgoingMessage || apiMessageText,
+                textMessage: outgoingMessage || apiMessageText,
               };
-              console.log('here')
+              console.log("here");
+              dispatch(
+                chatApi.util.updateQueryData(
+                  "getChatMessages",
+                  { ...payload, chatId },
+                  (draft) => {
+                    draft.messages.push(newMessage);
+                  }
+                )
+              );
+            }
+            //Incoming message handling
+            if (data?.body?.typeWebhook === "incomingMessageReceived") {
+              const chatId = data.body.senderData.chatId.slice(0, 12);
+              const textMessage =
+                data.body.messageData.textMessageData.textMessage;
+              const newMessage = {
+                type: "incoming",
+                idMessage: data.body.idMessage,
+                typeMessage: "extendedTextMessage",
+                chatId,
+                textMessage,
+              };
               dispatch(
                 chatApi.util.updateQueryData(
                   "getChatMessages",
