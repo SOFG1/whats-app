@@ -78,6 +78,7 @@ const ChatView = React.memo(() => {
     );
   }, [data?.messages]);
 
+
   //Scroll box to the bottom
   useEffect(() => {
     const box = listRef.current;
