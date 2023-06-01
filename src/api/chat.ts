@@ -1,6 +1,8 @@
 import { emptyApi } from ".";
 import { IUserLoginPayload } from "./user";
 
+const outgoingMessagesTypes = ['outgoingAPIMessageReceived', 'outgoingMessageReceived']
+
 interface IChatHistoryPayload extends IUserLoginPayload {
   chatId: string;
 }
@@ -62,28 +64,6 @@ export const chatApi = emptyApi.injectEndpoints({
             },
           };
         },
-        async onQueryStarted(payload, { dispatch, queryFulfilled }) {
-          try {
-            const { data } = await queryFulfilled;
-            const { instanceId, instanceToken, chatId } = payload;
-            const newMessage = {
-              type: "outgoing",
-              idMessage: data.idMessage,
-              typeMessage: "extendedTextMessage",
-              chatId,
-              textMessage: payload.message,
-            };
-            dispatch(
-              chatApi.util.updateQueryData(
-                "getChatMessages",
-                { instanceId, instanceToken, chatId },
-                (draft) => {
-                  draft.messages.push(newMessage);
-                }
-              )
-            );
-          } catch {}
-        },
         transformResponse: (raw: any): ChatHistoryRes => {
           return raw;
         },
@@ -100,7 +80,30 @@ export const chatApi = emptyApi.injectEndpoints({
         },
         async onQueryStarted(payload, { dispatch, queryFulfilled }) {
           try {
-            const { data } = await queryFulfilled;
+            const { data } = await queryFulfilled;            
+            //Outgoing message handling
+            if(data?.body?.typeWebhook === 'outgoingAPIMessageReceived' || data?.body?.typeWebhook === 'outgoingMessageReceived') {
+              const chatId = data.body.senderData.chatId.slice(0, 12)
+              const outgoingMessage = data.body?.messageData?.extendedTextMessageData?.text
+              const apiMessageText = data.body?.messageData?.textMessageData?.textMessage
+              const newMessage = {
+                type: "outgoing",
+                idMessage: data.body.idMessage,
+                typeMessage: "extendedTextMessage",
+                chatId,
+                textMessage : outgoingMessage || apiMessageText,
+              };
+              console.log('here')
+              dispatch(
+                chatApi.util.updateQueryData(
+                  "getChatMessages",
+                  { ...payload, chatId },
+                  (draft) => {
+                    draft.messages.push(newMessage);
+                  }
+                )
+              );
+            }
             //Delete notification
             if (data?.receiptId) {
               const receiptId = data.receiptId;

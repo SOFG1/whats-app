@@ -64,7 +64,7 @@ const ChatView = React.memo(() => {
   const listRef = useRef<HTMLDivElement>(null);
   const {} = useGetNotificationQuery(credentials as UserCredentials, {
     skip: !credentials,
-    pollingInterval: 2000,
+    pollingInterval: 3000,
   });
   const { data } = useGetChatMessagesQuery(
     { ...(credentials as UserCredentials), chatId: chatId as string },
