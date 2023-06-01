@@ -85,10 +85,7 @@ export const chatApi = emptyApi.injectEndpoints({
           try {
             const { data } = await queryFulfilled;
             //Outgoing message handling
-            if (
-              data?.body?.typeWebhook === "outgoingAPIMessageReceived" ||
-              data?.body?.typeWebhook === "outgoingMessageReceived"
-            ) {
+            if (outgoingMessagesTypes.includes(data?.body?.typeWebhook)) {
               const chatId = data.body.senderData.chatId.slice(0, 12);
               const outgoingMessage =
                 data.body?.messageData?.extendedTextMessageData?.text;
@@ -100,7 +97,7 @@ export const chatApi = emptyApi.injectEndpoints({
                 typeMessage: "extendedTextMessage",
                 chatId,
                 textMessage: outgoingMessage || apiMessageText,
-                timestamp: data.body.timestamp
+                timestamp: data.body.timestamp,
               };
               dispatch(
                 chatApi.util.updateQueryData(
@@ -123,7 +120,7 @@ export const chatApi = emptyApi.injectEndpoints({
                 typeMessage: "extendedTextMessage",
                 chatId,
                 textMessage,
-                timestamp: data.body.timestamp
+                timestamp: data.body.timestamp,
               };
               dispatch(
                 chatApi.util.updateQueryData(
