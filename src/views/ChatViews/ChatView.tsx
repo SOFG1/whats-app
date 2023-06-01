@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { chatDialogsSelector, selectedDialogSelector } from "../../store/chat";
 import {
   IMessage,
-  useGetChatMessagesMutation,
-  useGetNotificationsQuery,
+  useGetChatMessagesQuery,
+  useGetNotificationQuery,
 } from "../../api/chat";
 import { UserCredentials, userCredentialsSelector } from "../../store/user";
 import {
@@ -38,14 +38,14 @@ const ChatView = React.memo(() => {
   const credentials = useSelector(userCredentialsSelector);
   const chatId = useSelector(selectedDialogSelector);
   const dialogs = useSelector(chatDialogsSelector);
-  const {data: notifications} = useGetNotificationsQuery(
+  const { data: notifications } = useGetNotificationQuery(
     credentials as UserCredentials,
-    { skip: !credentials, pollingInterval: 3000 }
+    { skip: !credentials, pollingInterval: 2000 }
   );
-  const [getMessages, { data, ...res }] = useGetChatMessagesMutation({
-    fixedCacheKey: chatId || "null",
-  });
-
+  const { data } = useGetChatMessagesQuery(
+    { ...(credentials as UserCredentials), chatId: chatId as string },
+    { skip: !credentials || !chatId }
+  );
 
   const messages = useMemo(() => {
     return (
@@ -53,13 +53,6 @@ const ChatView = React.memo(() => {
       [...data.messages].sort((m: IMessage, p) => m.timestamp - p.timestamp)
     );
   }, [data?.messages]);
-
-  useEffect(() => {
-    if (credentials && chatId) {
-      const { instanceId, instanceToken } = credentials;
-      getMessages({ chatId, instanceId, instanceToken });
-    }
-  }, [credentials, chatId]);
 
   return (
     <StyledWrapper>

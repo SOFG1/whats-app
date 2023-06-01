@@ -9,6 +9,10 @@ interface ISendMessagePayload extends IChatHistoryPayload {
   message: string;
 }
 
+interface IDeleteNotificationPayload extends IUserLoginPayload {
+  receiptId: number;
+}
+
 export interface IMessage {
   chatId: string;
   idMessage: string;
@@ -29,7 +33,7 @@ export const chatApi = emptyApi.injectEndpoints({
   overrideExisting: false,
   endpoints: (builder) => {
     return {
-      getChatMessages: builder.mutation<any, IChatHistoryPayload>({
+      getChatMessages: builder.query<any, IChatHistoryPayload>({
         query: ({ instanceId, instanceToken, chatId }) => {
           return {
             url: `waInstance${instanceId}/getChatHistory/${instanceToken}/`,
@@ -58,24 +62,70 @@ export const chatApi = emptyApi.injectEndpoints({
             },
           };
         },
+        async onQueryStarted(payload, { dispatch, queryFulfilled }) {
+          try {
+            const { data } = await queryFulfilled;
+            console.log(data);
+            const { instanceId, instanceToken, chatId } = payload;
+            console.log(payload);
+            const newMessage = {
+              type: "outgoing",
+              idMessage: data.idMessage,
+              typeMessage: "extendedTextMessage",
+              chatId,
+              textMessage: payload.message,
+            };
+            dispatch(
+              chatApi.util.updateQueryData(
+                "getChatMessages",
+                { instanceId, instanceToken, chatId },
+                (draft) => {
+                  draft.messages.push(newMessage);
+                }
+              )
+            );
+          } catch {}
+        },
         transformResponse: (raw: any): ChatHistoryRes => {
-          console.log(raw);
           return raw;
         },
         transformErrorResponse: (raw: any) => {
           return raw;
         },
       }),
-      getNotifications: builder.query<any, IUserLoginPayload>({
+      getNotification: builder.query<any, IUserLoginPayload>({
         query: ({ instanceId, instanceToken }) => {
           return {
             url: `waInstance${instanceId}/receiveNotification/${instanceToken}/`,
             method: "GET",
           };
         },
+        async onQueryStarted(payload, { dispatch, queryFulfilled }) {
+          try {
+            const { data } = await queryFulfilled;
+            //Delete notification
+            if (data?.receiptId) {
+              const receiptId = data.receiptId;
+              dispatch(
+                chatApi.endpoints.deleteNotification.initiate({
+                  ...payload,
+                  receiptId,
+                })
+              );
+            }
+          } catch {}
+        },
         transformResponse: (raw: any) => {
-          console.log(raw);
           return raw;
+        },
+      }),
+      deleteNotification: builder.mutation<any, IDeleteNotificationPayload>({
+        query: ({ instanceId, instanceToken, receiptId }) => {
+          return {
+            url: `waInstance${instanceId}/deleteNotification/${instanceToken}/${receiptId}/
+            `,
+            method: "DELETE",
+          };
         },
       }),
     };
@@ -83,7 +133,7 @@ export const chatApi = emptyApi.injectEndpoints({
 });
 
 export const {
-  useGetChatMessagesMutation,
+  useGetChatMessagesQuery,
   useSendMessageMutation,
-  useGetNotificationsQuery,
+  useGetNotificationQuery,
 } = chatApi;

@@ -43,7 +43,7 @@ const MessageFormComponent = React.memo(() => {
           setText("");
         });
     }
-  }, [credentials, chatId, text, sendMessage, getMessages]);
+  }, [credentials, chatId, text, sendMessage]);
 
   return (
     <StyledForm>
