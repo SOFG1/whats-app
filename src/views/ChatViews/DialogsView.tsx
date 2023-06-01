@@ -5,7 +5,7 @@ import {
   DialogComponent,
 } from "../../components/ChatComponents";
 import { useSelector } from "react-redux";
-import { chatDialogsSelector } from "../../store/chat";
+import { chatDialogsSelector, selectedDialogSelector } from "../../store/chat";
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -26,12 +26,13 @@ const StyledTitle = styled.p`
 
 const DialogsView = React.memo(() => {
   const dialogs = useSelector(chatDialogsSelector);
+  const selected = useSelector(selectedDialogSelector)
   return (
     <StyledWrapper>
       <StyledTitle>Chats:</StyledTitle>
       <CreateChatComponent />
       {dialogs.map((d: string) => {
-        return <DialogComponent chatId={d} key={d} />;
+        return <DialogComponent selected={selected === d} chatId={d} key={d} />;
       })}
     </StyledWrapper>
   );
