@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { chatDialogsSelector, selectedDialogSelector } from "../../store/chat";
@@ -16,13 +16,36 @@ import {
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
   border-radius: 15px;
   border: 3px solid #fff;
   flex-grow: 1;
   padding: 15px;
   margin-inline-end: 20px;
+`;
+
+const StyledBox = styled.div`
+  overflow-y: auto;
+  margin-bottom: 10px;
+  /* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #fff;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 `;
 
 const StyledText = styled.p`
@@ -67,10 +90,11 @@ const ChatView = React.memo(() => {
       {chatId && messages?.length === 0 && (
         <StyledText>You have no messages yet</StyledText>
       )}
-
-      {messages?.map((m: IMessage) => (
-        <MessageComponent message={m} key={m.idMessage} />
-      ))}
+      <StyledBox>
+        {messages?.map((m: IMessage) => (
+          <MessageComponent message={m} key={m.idMessage} />
+        ))}
+      </StyledBox>
       {chatId && <MessageFormComponent />}
     </StyledWrapper>
   );

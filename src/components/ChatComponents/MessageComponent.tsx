@@ -11,6 +11,7 @@ const StyledMessage = styled.p<{isOutgoing: boolean}>`
   margin-bottom: 10px;
   font-size: 18px;
   font-family: sans-serif;
+  margin-right: 10px;
   ${({isOutgoing}) => isOutgoing && 'margin-left: auto;'}
 `;
 
