@@ -1,10 +1,7 @@
 import { emptyApi } from ".";
+import { checkIsIncoming } from "../utils/checkIsIncoming";
+import { checkIsOutgoing } from "../utils/checkIsOutgoing";
 import { IUserLoginPayload } from "./user";
-
-const outgoingMessagesTypes = [
-  "outgoingAPIMessageReceived",
-  "outgoingMessageReceived",
-];
 
 interface IChatHistoryPayload extends IUserLoginPayload {
   chatId: string;
@@ -84,8 +81,18 @@ export const chatApi = emptyApi.injectEndpoints({
         async onQueryStarted(payload, { dispatch, queryFulfilled }) {
           try {
             const { data } = await queryFulfilled;
+            //Delete notification
+            if (data?.receiptId) {
+              const receiptId = data.receiptId;
+              dispatch(
+                chatApi.endpoints.deleteNotification.initiate({
+                  ...payload,
+                  receiptId,
+                })
+              );
+            }
             //Outgoing message handling
-            if (outgoingMessagesTypes.includes(data?.body?.typeWebhook)) {
+            if (checkIsOutgoing(data)) {
               const chatId = data.body.senderData.chatId.slice(0, 12);
               const outgoingMessage =
                 data.body?.messageData?.extendedTextMessageData?.text;
@@ -110,10 +117,11 @@ export const chatApi = emptyApi.injectEndpoints({
               );
             }
             //Incoming message handling
-            if (data?.body?.typeWebhook === "incomingMessageReceived") {
+            if (checkIsIncoming(data)) {
               const chatId = data.body.senderData.chatId.slice(0, 12);
+              console.log(data);
               const textMessage =
-                data.body.messageData.textMessageData.textMessage;
+                data.body?.messageData?.textMessageData?.textMessage;
               const newMessage = {
                 type: "incoming",
                 idMessage: data.body.idMessage,
@@ -130,16 +138,6 @@ export const chatApi = emptyApi.injectEndpoints({
                     draft.messages.push(newMessage);
                   }
                 )
-              );
-            }
-            //Delete notification
-            if (data?.receiptId) {
-              const receiptId = data.receiptId;
-              dispatch(
-                chatApi.endpoints.deleteNotification.initiate({
-                  ...payload,
-                  receiptId,
-                })
               );
             }
           } catch {}
