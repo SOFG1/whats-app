@@ -49,7 +49,7 @@ export const chatApi = emptyApi.injectEndpoints({
             },
           };
         },
-        transformResponse: (raw: IMessage[], req, params): ChatHistoryRes => {
+        transformResponse: (raw: IMessage[], _req, params): ChatHistoryRes => {
           return { messages: raw, chatId: params.chatId };
         },
         transformErrorResponse: (raw: any) => {

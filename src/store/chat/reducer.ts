@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { IChatState } from ".";
-import { chatApi } from "../../api/chat";
 
 const initialState: IChatState = {
   dialogs: [],

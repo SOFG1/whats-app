@@ -22,7 +22,7 @@ export const userApi = emptyApi.injectEndpoints({
         },
         transformResponse: (
           raw: UserLoginRes,
-          req,
+          _req,
           { instanceId, instanceToken }
         ) => {
           return {
