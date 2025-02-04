@@ -44,7 +44,7 @@ const CreateChatComponent = React.memo(() => {
       />
       <StyledButton
         onClick={() => dispatch(addDialog(phoneNumber))}
-        disabled={phoneNumber.length !== 12}
+        disabled={phoneNumber.length < 8}
       >
         Add chat
       </StyledButton>
